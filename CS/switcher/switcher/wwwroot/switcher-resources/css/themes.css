@@ -14,7 +14,6 @@
     background: #7989ff;
 }
 
-
 .blazor-themes a.default:before {
     background: #007bff;
 }
@@ -73,10 +72,6 @@
 
 .blazor-themes a.yeti:before {
     background: #008cba;
-}
-
-.theme-external {
-    font-size: 0.875rem;
 }
 
 .blazor-themes a.fluent-light:before {

@@ -13,8 +13,7 @@ public interface IThemeLoadNotifier {
 
 public class DemoTheme : ITheme {
     private readonly ITheme _theme;
-    public DemoTheme(string name, ITheme theme) {
-        Name = name;
+    public DemoTheme(ITheme theme) {
         _theme = theme;
     }
     
@@ -23,7 +22,7 @@ public class DemoTheme : ITheme {
     public bool IsFluent => _theme is DxThemeFluent;
     public bool IsBootstrapDark { get; init; } = false;
 
-    public string Name { get; private set; }
+    public string Name => _theme.Name;
 
     public List<string> GetFilePaths() {
         return _theme.GetFilePaths();
@@ -37,27 +36,38 @@ public static class DemoThemes
     private const string FluentLightAdditionalCssPath = "switcher-resources/css/fluent-light.min.css";
     private const string FluentDarkAdditionalCssPath = "switcher-resources/css/fluent-dark.min.css";
     
-    public static readonly DemoTheme BlazingBerry = new("blazing-berry", Themes.BlazingBerry);
-    public static readonly DemoTheme BlazingDark = new("blazing-dark", Themes.BlazingDark);
-    public static readonly DemoTheme Purple = new("purple", Themes.Purple);
-    public static readonly DemoTheme OfficeWhite = new("office-white", Themes.OfficeWhite);
+    public static readonly DemoTheme BlazingBerry = new(Themes.BlazingBerry.Clone(properties => properties.Name = "blazing-berry"));
+    public static readonly DemoTheme BlazingDark = new(Themes.BlazingDark.Clone(properties => properties.Name = "blazing-dark"));
+    public static readonly DemoTheme Purple = new(Themes.Purple);
+    public static readonly DemoTheme OfficeWhite = new(Themes.OfficeWhite.Clone(properties => properties.Name = "office-white"));
 
-    public static readonly DemoTheme Bootstrap = new("default", Themes.BootstrapExternal.Clone(properties => properties.AddFilePaths(BootstrapPath)));
-    public static readonly DemoTheme BootstrapDark = new("default-dark", Themes.BootstrapExternal.Clone(properties => properties.AddFilePaths(BootstrapPath))) { IsBootstrapDark = true };
+    public static readonly DemoTheme Bootstrap = new(Themes.BootstrapExternal.Clone(properties => {
+        properties.Name = "default";
 
-    public static readonly DemoTheme FluentLight = new("fluent-light", Themes.Fluent.Clone(properties =>
+        properties.AddFilePaths(BootstrapPath);
+    }));
+    
+    public static readonly DemoTheme BootstrapDark = new(Themes.BootstrapExternal.Clone(properties => {
+        properties.Name = "default-dark";
+
+        properties.AddFilePaths(BootstrapPath);
+    })) { IsBootstrapDark = true };
+
+    public static readonly DemoTheme FluentLight = new(Themes.Fluent.Clone(properties => {
+        properties.Name = "fluent-light";
+
         properties.AddFilePaths(
-            FluentCustomCssPath, 
-            FluentLightAdditionalCssPath)
-    ));
+            FluentCustomCssPath,
+            FluentLightAdditionalCssPath);
+    }));
 
-    public static readonly DemoTheme FluentDark = new("fluent-dark", Themes.Fluent.Clone(properties =>
-    {
+    public static readonly DemoTheme FluentDark = new(Themes.Fluent.Clone(properties => {
+        properties.Name = "fluent-dark";
+        properties.Mode = ThemeMode.Dark;
+        
         properties.AddFilePaths(
             FluentCustomCssPath, 
             FluentDarkAdditionalCssPath);
-
-        properties.Mode = ThemeMode.Dark;
     }));
 }
 
