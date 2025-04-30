@@ -1,9 +1,9 @@
 ﻿@implements IDisposable
-@inject DxThemesService ThemesService
+@inject DemoThemeService ThemesService
 @inject PersistentComponentState ApplicationState
 
 @rendermode InteractiveServer
-<ThemeJsChangeDispatcher InitialThemeName="@DxThemes.BlazingBerry.Name" />
+<ThemeJsChangeDispatcher InitialThemeName="@DemoThemes.BlazingBerry.Name" />
 <div class="@GetHeaderContainerCss()">
     <div class="btn-container d-flex">
         <DxButton Click="@ToggleThemeSwitcherPanel" CssClass="@GetThemeSwitcherCssClass()" SizeMode="SizeMode.Large"
@@ -22,7 +22,7 @@
     PersistingComponentStateSubscription _persistingSubscription;
 
     protected string ThemeName {
-        get { return _themeName; }
+        get => _themeName;
         set {
             if (_themeName != value) {
                 _themeName = value;
@@ -30,13 +30,9 @@
             }
         }
     }
-    
-    protected bool IsBootstrapNative {
-        get { return ThemesService.ActiveDemoTheme.IsBootstrapNative; }
-    }
 
     bool ThemeSwitcherShown {
-        get { return _themeSwitcherShown; }
+        get => _themeSwitcherShown;
         set {
             if (_themeSwitcherShown != value) {
                 _themeSwitcherShown = value;
@@ -48,7 +44,7 @@
         if (ApplicationState.TryTakeFromJson<string>("ThemeName", out var themeName) && themeName != null)
             ThemeName = themeName;
         else
-            ThemeName = ThemesService.ActiveDemoTheme?.Name ?? string.Empty;
+            ThemeName = ThemesService.ActiveTheme?.Name ?? string.Empty;
     }
     
     void ToggleThemeSwitcherPanel() {
@@ -60,11 +56,7 @@
     }
     
     string GetHeaderContainerCss() {
-        List<string> cssClasses = new List<string>();
-        cssClasses.Add("theme-" + ThemeName.Replace(" ", "-"));
-        if (IsBootstrapNative)
-            cssClasses.Add("theme-external");
-        return string.Join(" ", cssClasses);
+        return "theme-" + ThemeName.Replace(" ", "-");
     }
     
     Task PersistData() {

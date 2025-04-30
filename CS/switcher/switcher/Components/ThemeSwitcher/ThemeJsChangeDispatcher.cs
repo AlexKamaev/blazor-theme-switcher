@@ -9,7 +9,7 @@ public class ThemeJsChangeDispatcher : ComponentBase, IThemeChangeRequestDispatc
 
     [Inject] private ISafeJSRuntime JsRuntime { get; set; }
 
-    [Inject] private DxThemesService ThemesService { get; set; }
+    [Inject] private DemoThemeService ThemesService { get; set; }
     [Inject] protected IThemeChangeService DxThemesService { get; set; }
 
     private DemoTheme _pendingDemoTheme;
@@ -18,7 +18,7 @@ public class ThemeJsChangeDispatcher : ComponentBase, IThemeChangeRequestDispatc
     protected override void OnInitialized() {
         base.OnInitialized();
         ThemesService.ThemeChangeRequestDispatcher = this;
-        if(ThemesService.ActiveDemoTheme == null)
+        if(ThemesService.ActiveTheme == null)
             ThemesService.SetActiveThemeByName(InitialThemeName);
     }
 
@@ -37,11 +37,10 @@ public class ThemeJsChangeDispatcher : ComponentBase, IThemeChangeRequestDispatc
 
         await _module.InvokeVoidAsync(
         "ThemeController.switchTheme",
-        demoTheme.IsBootstrapNative, 
         demoTheme.IsFluent, 
-        demoTheme.IsDarkMode, 
+        demoTheme.IsBootstrapDark, 
         demoTheme.Name,
-        switcher.Services.DxThemesService.ThemeCookieKey,
+        switcher.Services.DemoThemeService.ThemeCookieKey,
         DotNetObjectReference.Create(this));
     }
 

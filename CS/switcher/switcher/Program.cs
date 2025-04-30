@@ -14,7 +14,7 @@ builder.Services.AddDevExpressBlazor(options => {
 builder.Services.AddMvc();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddSingleton<WeatherForecastService>();
-builder.Services.AddScoped<DxThemesService>();
+builder.Services.AddScoped<DemoThemeService>();
 var app = builder.Build();
 if(!app.Environment.IsDevelopment()){
     app.UseExceptionHandler("/Error", createScopeForErrors: true);

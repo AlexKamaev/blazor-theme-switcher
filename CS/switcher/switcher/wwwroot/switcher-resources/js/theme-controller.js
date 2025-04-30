@@ -11,25 +11,20 @@ export const ThemeController = (function () {
         setCookie(cookieName, themeName, date);
     }
     
-    async function switchTheme(isBsNative, isFluent, isDark, name, cookie, reference) {
-        const html = document.querySelector("HTML");
-        const body = html.querySelector("body");
-        if(isBsNative) {
-            if(isDark)
-                html.setAttribute("data-bs-theme", "dark");
-        } else {
-            html.removeAttribute("data-bs-theme");
-        }
-        if(isFluent) {
-            if(isDark)
-                html.setAttribute("data-fluent-darkmode", "true");
-            else
-                html.removeAttribute("data-fluent-darkmode");
+    async function switchTheme(isFluent, isBootstrapDark, name, cookie, reference) {
+        
+        const html = document.documentElement;
+        const body = document.body;
+        
+        html.removeAttribute("data-bs-theme");
+        body.classList.remove("dxbl-theme-fluent");
+        
+        if(isBootstrapDark)
+            html.setAttribute("data-bs-theme", "dark");
+
+        if(isFluent)
             body.classList.add("dxbl-theme-fluent");
-        } else {
-            html.removeAttribute("data-fluent-darkmode");
-            body.classList.remove("dxbl-theme-fluent");
-        }
+        
         setThemeName(cookie, name);
 
         await reference.invokeMethodAsync("ThemeLoadedAsync");

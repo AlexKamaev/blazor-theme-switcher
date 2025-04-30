@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager NavigationManager
-@inject DxThemesService ThemesService
+@inject DemoThemeService ThemesService
 
 <div class="page">
     <Drawer DrawerHeader="drawerHeader" DrawerFooter="drawerFooter">
@@ -12,11 +12,18 @@
         <DrawerTarget>
             <div class="nav-buttons-container">
                 <NavLink href="@UrlGenerator.GetUrl(new Uri(NavigationManager.Uri).LocalPath, !ToggledSidebar)">
-                    <DxButton RenderStyle="@(ThemesService.IsActiveThemeDark ? ButtonRenderStyle.Light : ButtonRenderStyle.Dark)" RenderStyleMode="@ButtonRenderStyleMode.Text" CssClass="menu-button" IconCssClass="icon icon-menu"></DxButton>
+                    @* <DxButton RenderStyle="@(ThemesService.IsActiveThemeDark ? ButtonRenderStyle.Light : ButtonRenderStyle.Dark)" RenderStyleMode="@ButtonRenderStyleMode.Text" CssClass="menu-button" IconCssClass="icon icon-menu"></DxButton> *@
+
+                    <DxButton RenderStyleMode="@ButtonRenderStyleMode.Text" CssClass="menu-button" IconCssClass="icon icon-menu"></DxButton>
+                    
+                    
                 </NavLink>
-                @if(new Uri(NavigationManager.Uri).LocalPath != "/"){
+                @if (new Uri(NavigationManager.Uri).LocalPath != "/")
+                {
                     <NavLink href="@UrlGenerator.GetUrl("/", ToggledSidebar)" class="button-link hidden">
-                        <DxButton RenderStyle="@(ThemesService.IsActiveThemeDark ? ButtonRenderStyle.Light : ButtonRenderStyle.Dark)" Text="Back to Home" RenderStyleMode="@ButtonRenderStyleMode.Text" CssClass="menu-button-nav" IconCssClass="icon icon-back"></DxButton>
+                        @* <DxButton RenderStyle="@(ThemesService.IsActiveThemeDark ? ButtonRenderStyle.Light : ButtonRenderStyle.Dark)" Text="Back to Home" RenderStyleMode="@ButtonRenderStyleMode.Text" CssClass="menu-button-nav" IconCssClass="icon icon-back"></DxButton> *@
+
+                        <DxButton Text="Back to Home" RenderStyleMode="@ButtonRenderStyleMode.Text" CssClass="menu-button-nav" IconCssClass="icon icon-back"></DxButton>
                     </NavLink>
                 }
             </div>
@@ -42,10 +49,12 @@
 
     private RenderFragment drawerFooter => @<div>
                                                <NavLink href="https://docs.devexpress.com/Blazor/400725/blazor-components" class="button-link">
-                                                   <DxButton Text="Docs" RenderStyleMode="@ButtonRenderStyleMode.Text" CssClass="footer-button" RenderStyle="@(ThemesService.IsFluentDarkModeActive ? ButtonRenderStyle.Dark : ButtonRenderStyle.Light)" IconCssClass="icon docs-icon"></DxButton>
+                                                   @* <DxButton Text="Docs" RenderStyleMode="@ButtonRenderStyleMode.Text" CssClass="footer-button" RenderStyle="@(ThemesService.IsFluentDarkModeActive ? ButtonRenderStyle.Dark : ButtonRenderStyle.Light)" IconCssClass="icon docs-icon"></DxButton> *@
+                                                   <DxButton Text="Docs" RenderStyleMode="@ButtonRenderStyleMode.Text" CssClass="footer-button" RenderStyle="ButtonRenderStyle.Light" IconCssClass="icon docs-icon"></DxButton>
                                                </NavLink>
                                                <NavLink href="https://demos.devexpress.com/blazor/" class="button-link">
-                                                   <DxButton Text="Demos" RenderStyleMode="@ButtonRenderStyleMode.Text" CssClass="footer-button" RenderStyle="@(ThemesService.IsFluentDarkModeActive ? ButtonRenderStyle.Dark : ButtonRenderStyle.Light)" IconCssClass="icon demos-icon"></DxButton>
+                                                   @* <DxButton Text="Demos" RenderStyleMode="@ButtonRenderStyleMode.Text" CssClass="footer-button" RenderStyle="@(ThemesService.IsFluentDarkModeActive ? ButtonRenderStyle.Dark : ButtonRenderStyle.Light)" IconCssClass="icon demos-icon"></DxButton> *@
+                                                   <DxButton Text="Demos" RenderStyleMode="@ButtonRenderStyleMode.Text" CssClass="footer-button" RenderStyle="ButtonRenderStyle.Light" IconCssClass="icon demos-icon"></DxButton>
                                                </NavLink>
                                            </div>;
 

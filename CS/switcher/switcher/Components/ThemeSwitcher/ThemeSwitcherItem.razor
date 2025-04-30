@@ -1,7 +1,7 @@
-﻿@inject DxThemesService ThemesService
+﻿@inject DemoThemeService ThemesService
 @rendermode InteractiveServer
 
-<a class="themeswitcher-item list-group-item list-group-item-action @(ThemesService.ActiveDemoTheme == DemoTheme ? "active" : "text-body") @DemoTheme.Name.ToLower()"
+<a class="themeswitcher-item list-group-item list-group-item-action @(ThemesService.ActiveTheme == DemoTheme ? "active" : "text-body") @DemoTheme.Name.ToLower()"
    @onclick:preventDefault
    @onclick="Anchor_Click">
     <span>@DemoTheme.Title</span>

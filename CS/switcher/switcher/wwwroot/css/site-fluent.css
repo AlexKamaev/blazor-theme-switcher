@@ -2,7 +2,6 @@
     margin: 0;
 }
 
-
 .w-100 {
     width: 100%;
 }
@@ -28,6 +27,6 @@
     color: #fff;
 }
 
-[data-fluent-darkmode] .dxbl-theme-fluent .welcome-card {
+.dxbl-theme-fluent .welcome-card {
     color: var(--DS-primary-70);
 }

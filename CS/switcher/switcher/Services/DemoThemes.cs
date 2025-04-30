@@ -21,8 +21,7 @@ public class DemoTheme : ITheme {
     public string Title => CultureInfo.InvariantCulture.TextInfo.ToTitleCase(Name.Replace("-", " "));
 
     public bool IsFluent => _theme is DxThemeFluent;
-    public bool IsBootstrapNative { get; set; } = false;
-    public bool IsDarkMode { get; set; } = false;
+    public bool IsBootstrapDark { get; init; } = false;
 
     public string Name { get; private set; }
 
@@ -31,7 +30,7 @@ public class DemoTheme : ITheme {
     }
 }
 
-public static class DxThemes
+public static class DemoThemes
 {
     private const string BootstrapPath = "css/bootstrap/bootstrap.min.css";
     private const string FluentCustomCssPath = "css/site-fluent.css";
@@ -43,55 +42,43 @@ public static class DxThemes
     public static readonly DemoTheme Purple = new("purple", Themes.Purple);
     public static readonly DemoTheme OfficeWhite = new("office-white", Themes.OfficeWhite);
 
-    public static readonly DemoTheme Bootstrap = new("default",Themes.BootstrapExternal.Clone(properties =>
-    {
-        properties.AddFilePaths(BootstrapPath);
-    })) { IsBootstrapNative = true };
-    
-    public static readonly DemoTheme BootstrapDark = new("default-dark", Themes.BootstrapExternal.Clone(properties =>
-    {
-        properties.AddFilePaths(BootstrapPath);
-    })) { IsBootstrapNative = true, IsDarkMode = true };
+    public static readonly DemoTheme Bootstrap = new("default", Themes.BootstrapExternal.Clone(properties => properties.AddFilePaths(BootstrapPath)));
+    public static readonly DemoTheme BootstrapDark = new("default-dark", Themes.BootstrapExternal.Clone(properties => properties.AddFilePaths(BootstrapPath))) { IsBootstrapDark = true };
 
     public static readonly DemoTheme FluentLight = new("fluent-light", Themes.Fluent.Clone(properties =>
-    {
-        properties.AddFilePaths(FluentCustomCssPath, FluentLightAdditionalCssPath);
-    }));
+        properties.AddFilePaths(
+            FluentCustomCssPath, 
+            FluentLightAdditionalCssPath)
+    ));
 
     public static readonly DemoTheme FluentDark = new("fluent-dark", Themes.Fluent.Clone(properties =>
     {
-        properties.AddFilePaths(FluentCustomCssPath, FluentDarkAdditionalCssPath);
+        properties.AddFilePaths(
+            FluentCustomCssPath, 
+            FluentDarkAdditionalCssPath);
+
         properties.Mode = ThemeMode.Dark;
-    })) { IsDarkMode = true };
+    }));
 }
 
-public class DxThemesService {
+public class DemoThemeService {
     public const string ThemeCookieKey = "DXBZCurrentTheme";
     public List<ThemeSet> ThemeSets { get; } = CreateSets();
-    public DemoTheme ActiveDemoTheme { get; private set; } = DxThemes.BlazingBerry;
-    public DemoTheme DefaultDemoTheme => DxThemes.BlazingBerry;
-    public bool IsActiveThemeDark => ActiveDemoTheme.IsDarkMode;
-    public bool IsFluentActive => ActiveDemoTheme.IsFluent;
-    public bool IsBootstrapDarkActive => ActiveDemoTheme.IsBootstrapNative && IsActiveThemeDark;
-    public bool IsFluentDarkModeActive => IsFluentActive && IsActiveThemeDark;
+    public DemoTheme ActiveTheme { get; private set; } = DemoThemes.BlazingBerry;
+    
     public IThemeLoadNotifier ThemeLoadNotifier { get; set; }
     public IThemeChangeRequestDispatcher ThemeChangeRequestDispatcher { get; set; }
 
     public void SetActiveThemeByName(string themeName) {
         var theme = FindThemeByName(themeName);
-        if(theme != null)
-            ActiveDemoTheme = theme;
-        else
-            ActiveDemoTheme = DefaultDemoTheme;
+
+        ActiveTheme = theme ?? DemoThemes.BlazingBerry;
     }
 
     private DemoTheme? FindThemeByName(string themeName) {
         var themes = ThemeSets.SelectMany(ts => ts.Themes);
-        foreach (var theme in themes){
-            if(theme.Name == themeName)
-                return theme;
-        }
-        return null;
+        
+        return themes.SingleOrDefault(theme => theme.Name == themeName);
     }
 
     public class ThemeSet(string title, params DemoTheme[] themes) {
@@ -102,9 +89,9 @@ public class DxThemesService {
     private static List<ThemeSet> CreateSets() {
         return
         [
-            new ThemeSet("DevExpress Themes", DxThemes.BlazingBerry, DxThemes.BlazingDark, DxThemes.Purple, DxThemes.OfficeWhite),
-            new ThemeSet("Bootstrap Themes", DxThemes.Bootstrap, DxThemes.BootstrapDark),
-            new ThemeSet("Fluent Themes", DxThemes.FluentLight, DxThemes.FluentDark)
+            new ThemeSet("DevExpress Themes", DemoThemes.BlazingBerry, DemoThemes.BlazingDark, DemoThemes.Purple, DemoThemes.OfficeWhite),
+            new ThemeSet("Bootstrap Themes", DemoThemes.Bootstrap, DemoThemes.BootstrapDark),
+            new ThemeSet("Fluent Themes", DemoThemes.FluentLight, DemoThemes.FluentDark)
         ];
     }
 }
