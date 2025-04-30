@@ -12,13 +12,13 @@ public class ThemeJsChangeDispatcher : ComponentBase, IThemeChangeRequestDispatc
     [Inject] private DxThemesService ThemesService { get; set; }
     [Inject] protected IThemeChangeService DxThemesService { get; set; }
 
-    private Theme _pendingTheme;
+    private DemoTheme _pendingDemoTheme;
     private IJSObjectReference _module;
 
     protected override void OnInitialized() {
         base.OnInitialized();
         ThemesService.ThemeChangeRequestDispatcher = this;
-        if(ThemesService.ActiveTheme == null)
+        if(ThemesService.ActiveDemoTheme == null)
             ThemesService.SetActiveThemeByName(InitialThemeName);
     }
 
@@ -29,18 +29,18 @@ public class ThemeJsChangeDispatcher : ComponentBase, IThemeChangeRequestDispatc
             _module = await JsRuntime.InvokeAsync<IJSObjectReference>("import", "./switcher-resources/js/theme-controller.js");
     }
 
-    public async void RequestThemeChange(Theme theme) {
-        if(_pendingTheme == theme) return;
-        _pendingTheme = theme;
+    public async void RequestThemeChange(DemoTheme demoTheme) {
+        if(_pendingDemoTheme == demoTheme) return;
+        _pendingDemoTheme = demoTheme;
 
-        await DxThemesService.SetTheme(theme);
+        await DxThemesService.SetTheme(demoTheme);
 
         await _module.InvokeVoidAsync(
         "ThemeController.switchTheme",
-        theme.IsBootstrapNative, 
-        theme.IsFluent, 
-        theme.IsDarkMode, 
-        theme.Name,
+        demoTheme.IsBootstrapNative, 
+        demoTheme.IsFluent, 
+        demoTheme.IsDarkMode, 
+        demoTheme.Name,
         switcher.Services.DxThemesService.ThemeCookieKey,
         DotNetObjectReference.Create(this));
     }
@@ -48,10 +48,10 @@ public class ThemeJsChangeDispatcher : ComponentBase, IThemeChangeRequestDispatc
     [JSInvokable]
     public async Task ThemeLoadedAsync() {
         if(ThemesService.ThemeLoadNotifier != null) {
-            await ThemesService.ThemeLoadNotifier.NotifyThemeLoadedAsync(_pendingTheme);
+            await ThemesService.ThemeLoadNotifier.NotifyThemeLoadedAsync(_pendingDemoTheme);
         }
 
-        _pendingTheme = null;
+        _pendingDemoTheme = null;
     }
 
     public async ValueTask DisposeAsync() {

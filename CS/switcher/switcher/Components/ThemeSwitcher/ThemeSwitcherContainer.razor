@@ -10,7 +10,7 @@
                 @foreach(var themeSet in ThemesService.ThemeSets) {
                     <span class="themeswitcher-group card-header list-group-item">@themeSet.Title</span>
                     @foreach(var theme in themeSet.Themes) {
-                        <ThemeSwitcherItem Theme="@theme" Click="ThemeSwitcherItem_Click"/>
+                        <ThemeSwitcherItem DemoTheme="@theme" Click="ThemeSwitcherItem_Click"/>
                     }
                 }
             </div>
@@ -36,13 +36,13 @@
         ThemesService.ThemeLoadNotifier = this;
     }
 
-    async Task ThemeSwitcherItem_Click(Theme theme) {
-        ThemesService.ThemeChangeRequestDispatcher?.RequestThemeChange(theme);
+    async Task ThemeSwitcherItem_Click(DemoTheme demoTheme) {
+        ThemesService.ThemeChangeRequestDispatcher?.RequestThemeChange(demoTheme);
         await ToggleThemeSwitcherPanel(false);
     }
 
-    public async Task NotifyThemeLoadedAsync(Theme theme) {
-        ThemeName = theme.Name;
+    public async Task NotifyThemeLoadedAsync(DemoTheme demoTheme) {
+        ThemeName = demoTheme.Name;
         await ThemeNameChanged.InvokeAsync(ThemeName);
     }
 

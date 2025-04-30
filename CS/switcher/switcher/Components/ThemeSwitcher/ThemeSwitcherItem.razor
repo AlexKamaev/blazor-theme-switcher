@@ -1,16 +1,16 @@
 ﻿@inject DxThemesService ThemesService
 @rendermode InteractiveServer
 
-<a class="themeswitcher-item list-group-item list-group-item-action @(ThemesService.ActiveTheme == Theme ? "active" : "text-body") @Theme.Name.ToLower()"
+<a class="themeswitcher-item list-group-item list-group-item-action @(ThemesService.ActiveDemoTheme == DemoTheme ? "active" : "text-body") @DemoTheme.Name.ToLower()"
    @onclick:preventDefault
    @onclick="Anchor_Click">
-    <span>@Theme.Title</span>
+    <span>@DemoTheme.Title</span>
 </a>
 @code {
-    [Parameter] public Theme Theme { get; set; }
-    [Parameter] public EventCallback<Theme> Click { get; set; }
+    [Parameter] public DemoTheme DemoTheme { get; set; }
+    [Parameter] public EventCallback<DemoTheme> Click { get; set; }
 
     async Task Anchor_Click() {
-        await Click.InvokeAsync(Theme);
+        await Click.InvokeAsync(DemoTheme);
     }
 }

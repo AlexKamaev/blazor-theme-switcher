@@ -4,31 +4,26 @@ using DevExpress.Blazor;
 namespace switcher.Services;
 
 public interface IThemeChangeRequestDispatcher {
-    void RequestThemeChange(DemoTheme demoTheme);
+    void RequestThemeChange(Theme theme);
 }
 
 public interface IThemeLoadNotifier {
-    Task NotifyThemeLoadedAsync(DemoTheme demoTheme);
+    Task NotifyThemeLoadedAsync(Theme theme);
 }
 
-public class DemoTheme : ITheme {
-    private readonly ITheme _theme;
-    public DemoTheme(string name, ITheme theme) {
-        Name = name;
+public class Theme : ITheme {
+    private ITheme _theme;
+    public Theme(ITheme theme) {
         _theme = theme;
     }
-    
+    public List<string> GetFilePaths()
+    {
+        return _theme.GetFilePaths();
+    }
+    public string Name => _theme.Name;
     public string Title => CultureInfo.InvariantCulture.TextInfo.ToTitleCase(Name.Replace("-", " "));
 
     public bool IsFluent => _theme is DxThemeFluent;
-    public bool IsBootstrapNative { get; set; } = false;
-    public bool IsDarkMode { get; set; } = false;
-
-    public string Name { get; private set; }
-
-    public List<string> GetFilePaths() {
-        return _theme.GetFilePaths();
-    }
 }
 
 public static class DxThemes
@@ -38,54 +33,61 @@ public static class DxThemes
     private const string FluentLightAdditionalCssPath = "switcher-resources/css/fluent-light.min.css";
     private const string FluentDarkAdditionalCssPath = "switcher-resources/css/fluent-dark.min.css";
     
-    public static readonly DemoTheme BlazingBerry = new("blazing-berry", Themes.BlazingBerry);
-    public static readonly DemoTheme BlazingDark = new("blazing-dark", Themes.BlazingDark);
-    public static readonly DemoTheme Purple = new("purple", Themes.Purple);
-    public static readonly DemoTheme OfficeWhite = new("office-white", Themes.OfficeWhite);
+    public static readonly Theme BlazingBerry = new(Themes.BlazingBerry);
+    public static readonly Theme BlazingDark = new(Themes.BlazingDark);
+    public static readonly Theme Purple = new(Themes.Purple);
+    public static readonly Theme OfficeWhite = new(Themes.OfficeWhite);
 
-    public static readonly DemoTheme Bootstrap = new("default",Themes.BootstrapExternal.Clone(properties =>
+    public static readonly Theme Bootstrap = new(Themes.BootstrapExternal.Clone(properties =>
     {
+        properties.Name = "Default";
         properties.AddFilePaths(BootstrapPath);
-    })) { IsBootstrapNative = true };
+    }));
     
-    public static readonly DemoTheme BootstrapDark = new("default-dark", Themes.BootstrapExternal.Clone(properties =>
+    public static readonly Theme BootstrapDark = new(Themes.BootstrapExternal.Clone(properties =>
     {
+        properties.Name = "DefaultDark";
         properties.AddFilePaths(BootstrapPath);
-    })) { IsBootstrapNative = true, IsDarkMode = true };
+    }));
 
-    public static readonly DemoTheme FluentLight = new("fluent-light", Themes.Fluent.Clone(properties =>
+    public static readonly Theme FluentLight = new(Themes.Fluent.Clone(properties =>
     {
+        properties.Name = "FluentLight";
         properties.AddFilePaths(FluentCustomCssPath, FluentLightAdditionalCssPath);
     }));
 
-    public static readonly DemoTheme FluentDark = new("fluent-dark", Themes.Fluent.Clone(properties =>
+    public static readonly Theme FluentDark = new(Themes.Fluent.Clone(properties =>
     {
+        properties.Name = "FluentDark";
         properties.AddFilePaths(FluentCustomCssPath, FluentDarkAdditionalCssPath);
         properties.Mode = ThemeMode.Dark;
-    })) { IsDarkMode = true };
+    }));
 }
 
 public class DxThemesService {
     public const string ThemeCookieKey = "DXBZCurrentTheme";
     public List<ThemeSet> ThemeSets { get; } = CreateSets();
-    public DemoTheme ActiveDemoTheme { get; private set; } = DxThemes.BlazingBerry;
-    public DemoTheme DefaultDemoTheme => DxThemes.BlazingBerry;
-    public bool IsActiveThemeDark => ActiveDemoTheme.IsDarkMode;
-    public bool IsFluentActive => ActiveDemoTheme.IsFluent;
-    public bool IsBootstrapDarkActive => ActiveDemoTheme.IsBootstrapNative && IsActiveThemeDark;
-    public bool IsFluentDarkModeActive => IsFluentActive && IsActiveThemeDark;
+    public Theme ActiveTheme { get; private set; } = DxThemes.BlazingBerry;
+    public Theme DefaultTheme => DxThemes.BlazingBerry;
+    public bool IsFluentActive => ActiveTheme.IsFluent;
+    public bool IsBootstrapDarkActive => ActiveTheme == DxThemes.BootstrapDark;
+    public bool IsFluentDarkModeActive => ActiveTheme == DxThemes.FluentDark;
+    public bool IsActiveThemeDark => IsBootstrapDarkActive || IsFluentDarkModeActive;
+    public bool IsBootstrapNative => ActiveTheme == DxThemes.Bootstrap || ActiveTheme == DxThemes.BootstrapDark;
+
     public IThemeLoadNotifier ThemeLoadNotifier { get; set; }
     public IThemeChangeRequestDispatcher ThemeChangeRequestDispatcher { get; set; }
+    
 
     public void SetActiveThemeByName(string themeName) {
         var theme = FindThemeByName(themeName);
         if(theme != null)
-            ActiveDemoTheme = theme;
+            ActiveTheme = theme;
         else
-            ActiveDemoTheme = DefaultDemoTheme;
+            ActiveTheme = DefaultTheme;
     }
 
-    private DemoTheme? FindThemeByName(string themeName) {
+    private Theme? FindThemeByName(string themeName) {
         var themes = ThemeSets.SelectMany(ts => ts.Themes);
         foreach (var theme in themes){
             if(theme.Name == themeName)
@@ -94,9 +96,9 @@ public class DxThemesService {
         return null;
     }
 
-    public class ThemeSet(string title, params DemoTheme[] themes) {
+    public class ThemeSet(string title, params Theme[] themes) {
         public string Title { get; } = title;
-        public DemoTheme[] Themes { get; } = themes;
+        public Theme[] Themes { get; } = themes;
     }
 
     private static List<ThemeSet> CreateSets() {

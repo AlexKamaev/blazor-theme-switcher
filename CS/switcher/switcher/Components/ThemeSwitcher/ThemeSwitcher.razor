@@ -32,7 +32,7 @@
     }
     
     protected bool IsBootstrapNative {
-        get { return ThemesService.ActiveTheme.IsBootstrapNative; }
+        get { return ThemesService.ActiveDemoTheme.IsBootstrapNative; }
     }
 
     bool ThemeSwitcherShown {
@@ -48,7 +48,7 @@
         if (ApplicationState.TryTakeFromJson<string>("ThemeName", out var themeName) && themeName != null)
             ThemeName = themeName;
         else
-            ThemeName = ThemesService.ActiveTheme?.Name ?? string.Empty;
+            ThemeName = ThemesService.ActiveDemoTheme?.Name ?? string.Empty;
     }
     
     void ToggleThemeSwitcherPanel() {
