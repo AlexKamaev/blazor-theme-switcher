@@ -2,17 +2,6 @@
 
 namespace switcher.Services;
 
-public enum MyTheme {
-    FluentLight,
-    FluentDark,
-
-    BlazingBerry,
-    BlazingDark,
-    Purple,
-    OfficeWhite,
-
-    Bootstrap
-}
 public static class ThemesCollection {
     public static readonly ITheme FluentLight = Themes.Fluent.Clone(props => {
         props.Name = "FluentLight";
